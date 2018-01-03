@@ -8,15 +8,9 @@
                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
 
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location">
-			<value>vaultToken.properties</value>
-		</property>
-	</bean>
 
-    <bean name="authenticator" class="com.expedia.www.platform.ensconce.vault.authenticator.TokenAuthenticator">
-    		<constructor-arg index="0" value="${VAULT_TOKEN}"/>
-    </bean> 
+    <bean name="authenticator" class="com.expedia.www.platform.ensconce.vault.authenticator.EnvironmentAuthenticator"/>
+
 
     <bean name="vaultConfigBuilder" class="com.expedia.e3.shop.poc.vault.integration.wrapper.VaultConfigWrapper">
         <constructor-arg index="0" value="https://ewe-vault.test.expedia.com" />
