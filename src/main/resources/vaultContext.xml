@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 rel. 2 (http://www.altova.com) by EXPEDIA (EXPEDIA) -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=
+               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>vaultToken.properties</value>
+		</property>
+	</bean>
+
+    <bean name="authenticator" class="com.expedia.www.platform.ensconce.vault.authenticator.TokenAuthenticator">
+    		<constructor-arg index="0" value="${VAULT_TOKEN}"/>
+    </bean> 
+
+    <bean name="vaultConfigBuilder" class="com.expedia.e3.shop.poc.vault.integration.wrapper.VaultConfigWrapper">
+        <constructor-arg index="0" value="https://ewe-vault.test.expedia.com" />
+        <constructor-arg index="1" value="/certificate/combined-ca.pem" />
+    </bean>
+
+    <bean name="vaultConfig" factory-bean="vaultConfigBuilder" factory-method="build" />
+
+    <bean name="vaultWrapper" class="com.expedia.www.platform.ensconce.vault.wrapper.VaultWrapperImpl">
+        <constructor-arg index="0" ref="vaultConfig" />
+    </bean>
+
+    <bean name="retriever" class="com.expedia.e3.shop.poc.vault.integration.wrapper.VaultRetrieverWrapper">
+        <constructor-arg index="0" ref="authenticator" />
+        <constructor-arg index="1" ref="vaultWrapper" />
+        <constructor-arg index="2" value="true"/>
+    </bean>
+    
+    <bean name="vaultMap" class="java.util.Map" factory-bean="retriever" factory-method="get" >
+        <constructor-arg index="0" value="secret/upp" />
+    </bean>
+
+</beans>
